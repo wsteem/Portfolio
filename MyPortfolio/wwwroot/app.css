@@ -1,0 +1,20 @@
+/* Global Styles in wwwroot/app.css */
+.light-theme {
+    background: linear-gradient(to bottom, rgb(0, 46, 84), rgb(107, 149, 139));
+    min-height: 100vh;
+    color: white;
+}
+
+.dark-theme {
+    background: linear-gradient(to bottom, rgb(0, 15, 30), rgb(30, 60, 50));
+    min-height: 100vh;
+    color: #e4e6eb;
+}
+
+.headerImage {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid white;
+}

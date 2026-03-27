@@ -1,0 +1,61 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<div class="@ThemeClass">
+    <nav style="padding: 50px; display: flex; justify-content: center; gap: 50px;">
+        <a href="#" style="color: white; text-decoration: none;">Projects</a>
+        <a href="#" style="color: white; text-decoration: none;">Contact</a>
+        <button @onclick="ToggleTheme" style="cursor:pointer; border-radius: 20px; padding: 5px 15px;">
+            @(isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode")
+        </button>
+    </nav>
+
+    <main style="text-align: center; padding-top: 50px;">
+        <img class="headerImage" src="img/header.jpg" alt="Wesley Steem">
+        <h1 style="font-size: 3rem; margin-top: 20px;">Wesley Steem</h1>
+        <p style="font-size: 1.5rem;">First Year Computing Science Student</p>
+        <p>University of Alberta</p>
+        <section class="projects-grid" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 40px;">
+            @if (repositories == null)
+            {
+                <p>Loading projects from GitHub...</p>
+             }
+            else
+            {
+                @foreach (var repo in repositories.Take(6)) // Shows your top 6 newest projects
+                {
+                    <div class="repo-card" style="border: 1px solid rgba(255,255,255,0.2); padding: 20px; border-radius: 15px; width: 300px; background: rgba(255,255,255,0.1); backdrop-filter: blur(5px);">
+                        <h3 style="margin-bottom: 10px;">@repo.Name</h3>
+                        <p style="font-size: 0.9rem; opacity: 0.8; height: 50px; overflow: hidden;">@repo.Description</p>
+                        <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.8rem; font-weight: bold; color: #ffd700;">@repo.Language</span>
+                            <a href="@repo.Html_Url" target="_blank" style="color: white; text-decoration: underline; font-size: 0.9rem;">View Code</a>
+                        </div>
+                    </div>
+                }
+            }
+        </section>
+    </main>
+</div>
+
+@using MyPortfolio.Models
+@inject HttpClient Http
+
+@code {
+    private List<GithubRepo>? repositories;
+    private bool isDarkMode = false;
+    private string ThemeClass => isDarkMode ? "dark-theme" : "light-theme";
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Replace 'WesleySteem' with your actual GitHub username
+        // The User-Agent header is REQUIRED by GitHub's API
+        Http.DefaultRequestHeaders.Add("User-Agent", "CSharp-App");
+        
+        repositories = await Http.GetFromJsonAsync<List<GithubRepo>>(
+            "https://api.github.com/users/wsteem/repos?sort=updated"
+        );
+    }
+
+    private void ToggleTheme() => isDarkMode = !isDarkMode;
+}
